@@ -34,7 +34,7 @@ enum Role {
 
 
 model User {
-  id    Int     @id @default(autoincrement())
+  id    String    @id @default(cuid())
   email String  @unique
   username String @unique
   name  String?
@@ -52,6 +52,7 @@ model User {
   // --- Relations ---
   sessions      Session[]
   accounts      Account[]
+  products      Product[]
 
   @@map("user")
 }
@@ -61,9 +62,8 @@ model Session {
   expiresAt DateTime
   ipAddress String?
   userAgent String?
-  
-  // Relation must be Int because User.id is Int
-  userId    Int      
+  token        String
+  userId    String      
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -77,10 +77,8 @@ model Account {
   accountId    String
   providerId   String
   
-  // Relation must be Int because User.id is Int
-  userId       Int       
+  userId       String       
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
   accessToken  String?
   refreshToken String?
   idToken      String?
@@ -102,4 +100,12 @@ model Verification {
   updatedAt  DateTime @updatedAt
   
   @@map("verification")
+}
+
+model Product {
+  id Int  @id @default(autoincrement())
+  name String
+  subDomain String
+
+  users     User[]
 }
